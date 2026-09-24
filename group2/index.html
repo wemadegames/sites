@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Make Slime</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap">
+<style>
+  /* ===== How to Make Slime (Group 2) ===== */
+  /* ---- Tokens (fresh pastel palette) ---- */
+  :root{
+    --bg:#fbf5ff; --card:#ffffff; --ink:#4b4560; --muted:#8a83a0; --border:#efe6f7;
+    --pink:#ff9ec9; --mint:#7fe0bd; --lavender:#b9a3ff; --peach:#ffcf9e; --blue:#9fd4ff;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Nunito",system-ui,sans-serif; line-height:1.6; }
+  .wrap{ max-width:680px; margin:0 auto; padding:24px 20px 48px; }
+
+  /* ---- Typography roles ---- */
+  h1{ font-family:"Fredoka",system-ui,sans-serif; font-weight:700; font-size:clamp(30px,7vw,44px);
+    margin:0; color:var(--ink); letter-spacing:.01em; }
+  h2{ font-family:"Fredoka",system-ui,sans-serif; font-weight:600; font-size:22px; margin:0 0 12px; }
+  .eyebrow{ font-family:"Fredoka",system-ui,sans-serif; font-size:13px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--pink); font-weight:600; }
+  .lead{ font-size:16px; color:var(--muted); margin:8px 0 0; max-width:38ch; }
+
+  /* ---- Hero ---- */
+  .hero{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:8px; }
+  .hero .words{ flex:1; min-width:220px; }
+  .blob{ width:130px; height:130px; flex:none; filter:drop-shadow(0 8px 14px rgba(150,110,200,.22)); }
+
+  /* ---- Cards ---- */
+  section{ margin-top:24px; }
+  .card{ background:var(--card); border:1px solid var(--border); border-radius:20px; padding:22px; }
+
+  /* ---- Ingredient checklist ---- */
+  .need{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; }
+  .need li label{ display:flex; align-items:center; gap:12px; min-height:44px; padding:6px 8px; border-radius:12px; cursor:pointer; font-size:16px; }
+  .need li label:hover{ background:#faf4ff; }
+  .need input{ appearance:none; width:24px; height:24px; flex:none; border:2px solid var(--lavender);
+    border-radius:8px; cursor:pointer; position:relative; }
+  .need input:checked{ background:var(--mint); border-color:var(--mint); }
+  .need input:checked::after{ content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:15px; }
+  .need input:checked + span{ color:var(--muted); text-decoration:line-through; }
+  .opt{ color:var(--muted); font-size:14px; }
+
+  /* ---- Steps ---- */
+  .steps{ list-style:none; counter-reset:step; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; }
+  .steps li{ counter-increment:step; display:flex; gap:14px; align-items:flex-start; }
+  .steps li::before{ content:counter(step); flex:none; width:34px; height:34px; border-radius:50%;
+    background:var(--pink); color:#fff; font-family:"Fredoka",system-ui,sans-serif; font-weight:700;
+    display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .steps li p{ margin:4px 0 0; font-size:16px; }
+
+  /* ---- Note ---- */
+  .note{ background:#f2fbf6; border:1px solid #d5f2e5; border-radius:16px; padding:16px 18px; font-size:15px; color:#3f6b57; }
+  .note b{ color:#2f5d47; }
+
+  footer{ margin-top:28px; text-align:center; font-size:14px; color:var(--muted); }
+
+  /* ===== Mobile ===== */
+  @media(max-width:480px){
+    .wrap{ padding:20px 16px 40px; }
+    .card{ padding:18px; border-radius:16px; }
+    .blob{ width:100px; height:100px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="words">
+        <p class="eyebrow">Relax and make something</p>
+        <h1>How to Make Slime</h1>
+        <p class="lead">A calm little activity for relaxation and fun. Follow the steps and make your own stretchy slime.</p>
+      </div>
+      <!-- cute slime blob mascot -->
+      <svg class="blob" viewBox="0 0 150 150" role="img" aria-label="Smiling slime blob">
+        <path d="M38,14 C72,-2 120,6 138,40 C154,70 146,112 112,130 C104,150 84,150 78,131 C46,138 14,120 10,86 C4,44 12,26 38,14 Z" fill="#7fe0bd"/>
+        <circle cx="58" cy="70" r="9" fill="#fff"/><circle cx="58" cy="72" r="4" fill="#4b4560"/>
+        <circle cx="92" cy="70" r="9" fill="#fff"/><circle cx="92" cy="72" r="4" fill="#4b4560"/>
+        <path d="M60,92 Q75,104 90,92" stroke="#4b4560" stroke-width="4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </header>
+
+    <section>
+      <div class="card">
+        <p class="eyebrow" style="color:var(--lavender)">What you need</p>
+        <h2>Ingredients</h2>
+        <ul class="need">
+          <li><label><input type="checkbox"><span>1/2 cup white school glue (PVA)</span></label></li>
+          <li><label><input type="checkbox"><span>1/2 cup water</span></label></li>
+          <li><label><input type="checkbox"><span>1 teaspoon baking soda</span></label></li>
+          <li><label><input type="checkbox"><span>1/4 cup saline solution (with boric acid)</span></label></li>
+          <li><label><input type="checkbox"><span>Food coloring or glitter <span class="opt">(optional)</span></span></label></li>
+          <li><label><input type="checkbox"><span>A bowl and a spoon</span></label></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="card">
+        <p class="eyebrow" style="color:var(--blue)">The instructions</p>
+        <h2>Steps</h2>
+        <ol class="steps">
+          <li><p>Pour the glue into your bowl.</p></li>
+          <li><p>Add the water and stir until smooth.</p></li>
+          <li><p>Mix in a drop or two of food coloring, if you want.</p></li>
+          <li><p>Stir in the baking soda.</p></li>
+          <li><p>Add the saline solution a little at a time, stirring, until the slime pulls away from the bowl.</p></li>
+          <li><p>Knead it with your hands until it is stretchy and not sticky.</p></li>
+          <li><p>Stretch, squish, and relax. Store it in a sealed container.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section>
+      <p class="note"><b>Stay safe:</b> ask an adult to help, wash your hands after, and do not eat the slime.</p>
+    </section>
+
+    <footer>Made for relaxation and fun. Tap an ingredient to check it off.</footer>
+  </div>
+
+<script>
+  /* remember which ingredients are checked off, on this device */
+  const boxes = document.querySelectorAll('.need input');
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem('slime_need')) || {}; } catch(e) {}
+  boxes.forEach((b,i)=>{ b.checked = !!saved[i];
+    b.addEventListener('change', ()=>{ saved[i]=b.checked; try{ localStorage.setItem('slime_need', JSON.stringify(saved)); }catch(e){} });
+  });
+</script>
+</body>
+</html>
