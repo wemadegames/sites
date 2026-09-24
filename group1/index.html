@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Sports</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap">
+<style>
+  /* ===== Daily Sports (Group 1) — sports feed ===== */
+  /* ---- Tokens ---- */
+  :root{
+    --red:#d81f2a; --red-dark:#b0141d; --blue:#1656c9; --ink:#16181d;
+    --bg:#f4f5f7; --card:#ffffff; --muted:#5b6270; --border:#e3e5ea; --white:#ffffff;
+  }
+  *{ box-sizing:border-box; }
+  [hidden]{ display:none!important; }
+  body{ margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; line-height:1.5; }
+
+  /* ---- Header ---- */
+  .site-header{ background:var(--red); color:var(--white); }
+  .bar{ max-width:760px; margin:0 auto; padding:16px 20px; display:flex; align-items:center; gap:10px; }
+  .logo{ font-family:"Oswald",system-ui,sans-serif; font-weight:700; font-size:26px; letter-spacing:.04em; text-transform:uppercase; }
+  .badge{ font-size:22px; }
+  .tagline{ max-width:760px; margin:0 auto; padding:10px 20px 16px; font-size:15px; color:var(--muted); }
+
+  /* ---- Tabs (the "multiple places") ---- */
+  .tabs{ position:sticky; top:0; z-index:5; background:var(--card); border-bottom:2px solid var(--border);
+    display:flex; max-width:760px; margin:0 auto; }
+  .tab{ flex:1; min-height:48px; padding:12px 8px; border:none; background:none; cursor:pointer;
+    font-family:"Oswald",system-ui,sans-serif; font-weight:600; font-size:15px; text-transform:uppercase; letter-spacing:.02em;
+    color:var(--muted); border-bottom:3px solid transparent; }
+  .tab.active{ color:var(--red); border-bottom-color:var(--red); }
+
+  /* ---- Feed ---- */
+  main{ max-width:760px; margin:0 auto; padding:16px 16px 8px; }
+  .games{ display:flex; flex-direction:column; gap:12px; }
+  .game{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px;
+    box-shadow:0 1px 2px rgba(20,24,34,.05); }
+  .status{ display:inline-block; font-family:"Oswald",system-ui,sans-serif; font-weight:600; font-size:12px;
+    text-transform:uppercase; letter-spacing:.06em; padding:3px 9px; border-radius:5px; margin-bottom:10px; }
+  .status.time{ background:#e8edfb; color:var(--blue); }
+  .status.live{ background:var(--red); color:var(--white); }
+  .status.final{ background:var(--ink); color:var(--white); }
+
+  .row{ display:flex; align-items:center; gap:10px; padding:5px 0; }
+  .chip{ width:14px; height:14px; border-radius:50%; flex:none; border:1px solid rgba(0,0,0,.15); }
+  .chip.red{ background:var(--red); } .chip.blue{ background:var(--blue); }
+  .chip.black{ background:var(--ink); } .chip.white{ background:var(--white); border-color:#c7ccd6; }
+  .team-name{ flex:1; font-weight:600; }
+  .score{ font-family:ui-monospace,Menlo,Consolas,monospace; font-size:20px; font-weight:700; font-variant-numeric:tabular-nums; min-width:34px; text-align:right; }
+  .star{ flex:none; width:36px; height:36px; border:none; background:none; cursor:pointer; font-size:20px; line-height:1; color:#c7ccd6; }
+  .star.on{ color:var(--red); }
+  .row.rooting .team-name{ color:var(--red); }
+
+  footer{ max-width:760px; margin:0 auto; padding:16px 20px 28px; font-size:13px; color:var(--muted); }
+  footer b{ color:var(--ink); }
+
+  /* ===== Mobile ===== */
+  @media(max-width:480px){
+    .logo{ font-size:22px; } .badge{ font-size:20px; }
+    .tab{ font-size:13px; padding:12px 4px; }
+    .score{ font-size:18px; }
+  }
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="bar"><span class="badge">🏆</span><span class="logo">Daily Sports</span></div>
+  </header>
+  <p class="tagline">Watch games, find recent scores, and root for your home team.</p>
+
+  <nav class="tabs" aria-label="Sections">
+    <button class="tab active" data-tab="upcoming">Upcoming Games</button>
+    <button class="tab" data-tab="current">Current Games</button>
+    <button class="tab" data-tab="past">Past Scores</button>
+  </nav>
+
+  <main>
+    <section id="upcoming" class="panel"><div class="games"></div></section>
+    <section id="current" class="panel" hidden><div class="games"></div></section>
+    <section id="past" class="panel" hidden><div class="games"></div></section>
+  </main>
+
+  <footer><b>Daily Sports.</b> Sample games shown, tap the star to root for a team.</footer>
+
+<script>
+/* ===== Daily Sports (Group 1) ===== */
+const TEAMS = { 'Red Hawks':'red', 'Blue Bolts':'blue', 'Night Owls':'black', 'Snow Foxes':'white' };
+const DATA = {
+  upcoming: [
+    { a:'Red Hawks',  b:'Blue Bolts',  info:'Sat 3:00 PM' },
+    { a:'Night Owls', b:'Snow Foxes',  info:'Sat 6:30 PM' },
+    { a:'Blue Bolts', b:'Night Owls',  info:'Sun 1:00 PM' },
+  ],
+  current: [
+    { a:'Red Hawks', sa:21, b:'Night Owls', sb:17 },
+    { a:'Blue Bolts', sa:10, b:'Snow Foxes', sb:13 },
+  ],
+  past: [
+    { a:'Blue Bolts', sa:27, b:'Snow Foxes', sb:20 },
+    { a:'Night Owls', sa:31, b:'Red Hawks',  sb:24 },
+    { a:'Snow Foxes', sa:14, b:'Red Hawks',  sb:30 },
+  ],
+};
+
+// which teams the viewer roots for (saved on this device)
+let fav = new Set();
+try { fav = new Set(JSON.parse(localStorage.getItem('ds_fav')) || []); } catch(e) {}
+const saveFav = () => { try { localStorage.setItem('ds_fav', JSON.stringify([...fav])); } catch(e){} };
+
+function teamRow(name, score){
+  const rooting = fav.has(name) ? ' rooting' : '';
+  const on = fav.has(name) ? ' on' : '';
+  const scoreCell = (score===undefined) ? '' : `<span class="score">${score}</span>`;
+  return `<div class="row${rooting}">
+      <span class="chip ${TEAMS[name]}"></span>
+      <span class="team-name">${name}</span>
+      ${scoreCell}
+      <button class="star${on}" data-team="${name}" aria-label="Root for ${name}">${fav.has(name)?'★':'☆'}</button>
+    </div>`;
+}
+function gameCard(g, kind){
+  const status = kind==='upcoming' ? `<span class="status time">${g.info}</span>`
+              : kind==='current'  ? `<span class="status live">Live now</span>`
+              : `<span class="status final">Final</span>`;
+  return `<article class="game">${status}
+      ${teamRow(g.a, g.sa)}
+      ${teamRow(g.b, g.sb)}
+    </article>`;
+}
+function render(){
+  for(const kind of ['upcoming','current','past']){
+    document.querySelector(`#${kind} .games`).innerHTML = DATA[kind].map(g=>gameCard(g,kind)).join('');
+  }
+}
+
+// tabs: show one section at a time
+document.querySelectorAll('.tab').forEach(t=> t.addEventListener('click', ()=>{
+  document.querySelectorAll('.tab').forEach(x=> x.classList.toggle('active', x===t));
+  document.querySelectorAll('.panel').forEach(p=> p.hidden = p.id!==t.dataset.tab);
+}));
+
+// star: root for a team (works across every section)
+document.addEventListener('click', e=>{
+  const btn = e.target.closest('.star'); if(!btn) return;
+  const name = btn.dataset.team;
+  fav.has(name) ? fav.delete(name) : fav.add(name);
+  saveFav(); render();
+});
+
+render();
+</script>
+</body>
+</html>
