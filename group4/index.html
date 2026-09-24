@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Make a Cake</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Quicksand:wght@500;600&display=swap">
+<style>
+  /* ===== How to Make a Cake (Group 4) ===== */
+  /* ---- Tokens (fresh pink baking palette) ---- */
+  :root{
+    --bg:#ffe1ee; --card:#ffffff; --ink:#6b3b52; --muted:#a9768c; --border:#ffcbe0;
+    --pink:#ff86bb; --pink-d:#ef5aa0; --cream:#fff3e2; --sponge:#eac49b;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Quicksand",system-ui,sans-serif; line-height:1.6; }
+  .wrap{ max-width:760px; margin:0 auto; padding:24px 20px 48px; }
+
+  /* ---- Header ---- */
+  header{ text-align:center; margin-bottom:16px; }
+  .cakemoji{ font-size:34px; }
+  h1{ font-family:"Baloo 2",system-ui,sans-serif; font-weight:700; font-size:clamp(30px,7vw,44px); margin:4px 0 0; color:var(--pink-d); }
+  .lead{ color:var(--muted); font-size:15px; margin:6px 0 0; }
+
+  /* ---- Layout: checklist next to cake ---- */
+  .layout{ display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
+  .card{ background:var(--card); border:1px solid var(--border); border-radius:20px; padding:20px; }
+  h2{ font-family:"Baloo 2",system-ui,sans-serif; font-weight:600; font-size:20px; margin:0 0 4px; }
+  .progress{ font-size:13px; color:var(--muted); margin:0 0 12px; font-weight:600; }
+
+  /* ---- Checklist ---- */
+  .list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px; }
+  .list label{ display:flex; align-items:center; gap:12px; min-height:44px; padding:6px 8px; border-radius:12px; cursor:pointer; font-size:15px; font-weight:500; }
+  .list label:hover{ background:#fff2f8; }
+  .list input{ appearance:none; width:24px; height:24px; flex:none; border:2px solid var(--pink); border-radius:8px; cursor:pointer; position:relative; }
+  .list input:checked{ background:var(--pink); border-color:var(--pink); }
+  .list input:checked::after{ content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:14px; }
+  .list input:checked + span{ color:var(--muted); }
+
+  /* ---- Cake ---- */
+  .cake-wrap{ position:sticky; top:16px; text-align:center; }
+  .cake{ width:100%; max-width:280px; height:auto; }
+  .ready{ margin-top:8px; font-family:"Baloo 2",system-ui,sans-serif; font-weight:700; color:var(--pink-d); font-size:18px; opacity:0; transform:scale(.8); transition:.35s; }
+  .ready.show{ opacity:1; transform:none; }
+
+  /* cake parts appear when their ingredient is checked */
+  .part{ opacity:0; transition:opacity .2s; transform-box:fill-box; transform-origin:center; }
+  .part.on{ opacity:1; animation:drop .5s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes drop{ 0%{ opacity:0; transform:translateY(-18px) scale(.82); } 60%{ opacity:1; } 100%{ opacity:1; transform:none; } }
+
+  /* ---- Steps strip ---- */
+  .steps{ margin-top:22px; }
+  .steps ol{ margin:8px 0 0; padding-left:20px; display:flex; flex-direction:column; gap:6px; font-size:15px; }
+
+  footer{ margin-top:26px; text-align:center; font-size:13px; color:var(--muted); }
+
+  @media (prefers-reduced-motion: reduce){ .part.on{ animation:none; } .ready{ transition:none; } }
+
+  /* ===== Mobile: stack, keep the cake stuck at the top while you check ===== */
+  @media(max-width:640px){
+    .layout{ grid-template-columns:1fr; }
+    .cake-wrap{ order:-1; position:sticky; top:0; z-index:3; background:var(--bg); padding:8px 0 10px; }
+    .cake{ max-width:200px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="cakemoji">🎂</div>
+      <h1>How to Make a Cake</h1>
+      <p class="lead">Check off each thing you need, and watch it land on the cake.</p>
+    </header>
+
+    <div class="layout">
+      <section class="card">
+        <h2>What you need</h2>
+        <p class="progress"><span id="count">0</span> of 8 on the cake</p>
+        <ul class="list" id="list"></ul>
+      </section>
+
+      <aside class="cake-wrap">
+        <svg class="cake" viewBox="0 0 240 280" role="img" aria-label="A cake that builds as you check ingredients">
+          <!-- plate (always there) -->
+          <ellipse cx="120" cy="254" rx="108" ry="13" fill="#f3c6da"/>
+          <ellipse cx="120" cy="250" rx="108" ry="13" fill="#ffffff"/>
+          <!-- layers + toppings, each tied to an ingredient -->
+          <g id="l-bottom" class="part"><rect x="45" y="206" width="150" height="36" rx="8" fill="#eac49b"/><rect x="45" y="206" width="150" height="7" rx="3" fill="#f2d4ae"/></g>
+          <g id="f-1" class="part"><rect x="45" y="194" width="150" height="14" rx="6" fill="#fff3e2"/></g>
+          <g id="l-mid" class="part"><rect x="45" y="160" width="150" height="36" rx="8" fill="#eac49b"/></g>
+          <g id="f-2" class="part"><rect x="45" y="148" width="150" height="14" rx="6" fill="#fff3e2"/></g>
+          <g id="l-top" class="part"><rect x="45" y="114" width="150" height="36" rx="8" fill="#eac49b"/></g>
+          <g id="frosting" class="part">
+            <rect x="43" y="98" width="154" height="22" rx="10" fill="#ff9ec9"/>
+            <circle cx="60" cy="120" r="8" fill="#ff9ec9"/><circle cx="90" cy="122" r="8" fill="#ff9ec9"/>
+            <circle cx="120" cy="121" r="8" fill="#ff9ec9"/><circle cx="150" cy="122" r="8" fill="#ff9ec9"/><circle cx="180" cy="120" r="8" fill="#ff9ec9"/>
+          </g>
+          <g id="sprinkles" class="part">
+            <rect x="70" y="103" width="4" height="9" rx="2" fill="#7fd0ff" transform="rotate(20 72 107)"/>
+            <rect x="96" y="107" width="4" height="9" rx="2" fill="#ffd23f" transform="rotate(-25 98 111)"/>
+            <rect x="116" y="103" width="4" height="9" rx="2" fill="#8ce0a0" transform="rotate(10 118 107)"/>
+            <rect x="136" y="108" width="4" height="9" rx="2" fill="#c9a3ff" transform="rotate(35 138 112)"/>
+            <rect x="160" y="104" width="4" height="9" rx="2" fill="#ff8f9c" transform="rotate(-15 162 108)"/>
+            <rect x="128" y="112" width="4" height="9" rx="2" fill="#ffd23f" transform="rotate(45 130 116)"/>
+          </g>
+          <g id="cherry" class="part">
+            <path d="M120,86 q4,-13 15,-15" stroke="#7a4a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="120" cy="90" r="12" fill="#e8394a"/>
+            <circle cx="116" cy="86" r="3.2" fill="#ff8f9c"/>
+          </g>
+        </svg>
+        <div class="ready" id="ready">Your cake is ready! 🎉</div>
+      </aside>
+    </div>
+
+    <section class="steps card">
+      <h2>Then bake it</h2>
+      <ol>
+        <li>Mix the dry things, then stir in the wet things until smooth.</li>
+        <li>Pour the batter into a greased pan.</li>
+        <li>Bake at 350°F (175°C) for about 30 minutes.</li>
+        <li>Let it cool, then add frosting, sprinkles, and a cherry on top.</li>
+      </ol>
+    </section>
+
+    <footer>Made for fun. Check the boxes to build your cake.</footer>
+  </div>
+
+<script>
+/* ===== How to Make a Cake ===== */
+const ING = [
+  { id:'flour',     label:'2 cups flour',      part:'l-bottom' },
+  { id:'sugar',     label:'1 cup sugar',       part:'f-1' },
+  { id:'eggs',      label:'2 eggs',            part:'l-mid' },
+  { id:'butter',    label:'1/2 cup butter',    part:'f-2' },
+  { id:'milk',      label:'1 cup milk',        part:'l-top' },
+  { id:'frosting',  label:'Frosting',          part:'frosting' },
+  { id:'sprinkles', label:'Sprinkles',         part:'sprinkles' },
+  { id:'cherry',    label:'A cherry on top',   part:'cherry' },
+];
+
+let done = new Set();
+try { done = new Set(JSON.parse(localStorage.getItem('cake_done')) || []); } catch(e) {}
+const save = () => { try { localStorage.setItem('cake_done', JSON.stringify([...done])); } catch(e){} };
+
+const list = document.getElementById('list');
+list.innerHTML = ING.map(i=>`<li><label>
+  <input type="checkbox" data-id="${i.id}" data-part="${i.part}" ${done.has(i.id)?'checked':''}>
+  <span>${i.label}</span></label></li>`).join('');
+
+function apply(id, part, on){
+  document.getElementById(part).classList.toggle('on', on);
+  on ? done.add(id) : done.delete(id);
+}
+function refresh(){
+  document.getElementById('count').textContent = done.size;
+  document.getElementById('ready').classList.toggle('show', done.size === ING.length);
+}
+
+// set the starting cake from saved state (no animation on load)
+ING.forEach(i=>{ if(done.has(i.id)) document.getElementById(i.part).classList.add('on'); });
+refresh();
+
+list.addEventListener('change', e=>{
+  const cb = e.target; if(!cb.matches('input')) return;
+  apply(cb.dataset.id, cb.dataset.part, cb.checked);
+  save(); refresh();
+});
+</script>
+</body>
+</html>
