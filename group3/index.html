@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soccer Skills</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik:wght@400;500;600&display=swap">
+<style>
+  /* ===== Soccer Skills (Group 3) — gold + silver on dark ===== */
+  /* ---- Tokens ---- */
+  :root{
+    --bg:#111219; --panel:#191b25; --card:#1c1f2b; --ink:#eceef4; --muted:#98a0b0; --border:#2b3040;
+    --gold:#e8bf5a; --warn:#ff7a6b; --silver:#c8cfdb;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Rubik",system-ui,sans-serif; line-height:1.6; }
+  .wrap{ max-width:720px; margin:0 auto; padding:28px 20px 56px; }
+
+  /* ---- Metallic text ---- */
+  .gold{ background:linear-gradient(92deg,#ffe6a0,#e0a92e 42%,#fff3cf 52%,#e0a92e 62%,#ffe6a0);
+    -webkit-background-clip:text; background-clip:text; color:transparent; background-size:220% auto; }
+  h1.gold{ animation:shine 5s linear infinite; }
+  @keyframes shine{ to{ background-position:220% center; } }
+
+  /* ---- Hero ---- */
+  .hero{ position:relative; display:flex; align-items:center; gap:20px; flex-wrap:wrap; padding:8px 0 20px; }
+  .hero::before{ content:""; position:absolute; top:-30px; left:-40px; width:240px; height:240px;
+    background:radial-gradient(circle, rgba(232,191,90,.20), transparent 68%); pointer-events:none; }
+  .hero .words{ flex:1; min-width:230px; position:relative; }
+  .eyebrow{ font-family:"Rubik"; font-weight:600; font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--silver); }
+  h1{ font-family:"Anton",system-ui,sans-serif; font-weight:400; font-size:clamp(40px,10vw,68px);
+    line-height:.98; margin:8px 0 0; letter-spacing:.01em; text-transform:uppercase; }
+  .lead{ color:var(--muted); font-size:16px; margin:12px 0 0; max-width:40ch; }
+  .ball{ width:150px; height:150px; flex:none; animation:bob 3.4s ease-in-out infinite; }
+  @keyframes bob{ 50%{ transform:translateY(-10px); } }
+
+  /* ---- Skill cards ---- */
+  .skill{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px 22px; margin-top:18px;
+    transition:transform .2s, border-color .2s, box-shadow .2s; animation:rise .6s ease both; }
+  .skill:nth-child(2){ animation-delay:.05s; } .skill:nth-child(3){ animation-delay:.1s; }
+  .skill:nth-child(4){ animation-delay:.15s; } .skill:nth-child(5){ animation-delay:.2s; }
+  .skill:hover{ transform:translateY(-3px); border-color:var(--silver); box-shadow:0 10px 26px rgba(232,191,90,.14); }
+  @keyframes rise{ from{ opacity:.25; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+
+  .skill-head{ display:flex; align-items:baseline; gap:12px; }
+  .num{ font-family:"Anton",system-ui,sans-serif; font-size:26px; }
+  h2{ font-family:"Anton",system-ui,sans-serif; font-weight:400; font-size:24px; margin:0; text-transform:uppercase; letter-spacing:.01em; }
+
+  .silver-line{ height:2px; border:none; margin:16px 0; border-radius:2px;
+    background:linear-gradient(90deg,transparent,var(--silver),transparent); background-size:200% auto; animation:sheen 4s linear infinite; }
+  @keyframes sheen{ to{ background-position:200% center; } }
+
+  .label{ font-family:"Rubik"; font-weight:600; font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--silver); margin:0 0 8px; }
+  .label.warn{ color:var(--warn); }
+  ol, .mistakes{ margin:0; padding-left:20px; display:flex; flex-direction:column; gap:6px; }
+  ol li, .mistakes li{ font-size:15.5px; }
+  .mistakes{ list-style:none; padding-left:0; }
+  .mistakes li{ display:flex; gap:9px; }
+  .mistakes li::before{ content:"\2717"; color:var(--warn); font-weight:700; flex:none; }
+
+  footer{ margin-top:32px; text-align:center; font-size:14px; color:var(--muted); }
+  footer .gold{ font-weight:600; }
+
+  /* ===== Motion off for those who prefer it ===== */
+  @media (prefers-reduced-motion: reduce){
+    h1.gold, .ball, .skill, .silver-line{ animation:none; }
+  }
+  /* ===== Mobile ===== */
+  @media(max-width:480px){
+    .wrap{ padding:22px 16px 44px; }
+    .ball{ width:110px; height:110px; }
+    .skill{ padding:18px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="words">
+        <p class="eyebrow">For newer players</p>
+        <h1 class="gold">Soccer Skills</h1>
+        <p class="lead">Get better and practice your soccer. Simple skills, the steps to do them, and the key mistakes to avoid.</p>
+      </div>
+      <svg class="ball" id="ball" viewBox="0 0 200 200" role="img" aria-label="Soccer ball"></svg>
+    </header>
+
+    <main id="skills"></main>
+
+    <footer>Practice a little every day. <span class="gold">You got this.</span></footer>
+  </div>
+
+<script>
+/* ===== Soccer ball graphic ===== */
+function poly(cx,cy,r,rot){ const p=[]; for(let i=0;i<5;i++){ const a=(-90+rot+i*72)*Math.PI/180; p.push([cx+r*Math.cos(a), cy+r*Math.sin(a)]); } return p; }
+const fmt = a => a.map(p=>p.map(n=>n.toFixed(1)).join(',')).join(' ');
+(function ball(){
+  const C=100, cp=poly(C,C,30,0);
+  let h = `<circle cx="100" cy="100" r="86" fill="#f4f6fa" stroke="#c8cfdb" stroke-width="3"/>`;
+  cp.forEach((v,i)=>{ const a=(-90+i*72)*Math.PI/180, ox=C+66*Math.cos(a), oy=C+66*Math.sin(a);
+    h += `<line x1="${v[0].toFixed(1)}" y1="${v[1].toFixed(1)}" x2="${ox.toFixed(1)}" y2="${oy.toFixed(1)}" stroke="#2b2f3a" stroke-width="3"/>`;
+    h += `<polygon points="${fmt(poly(ox,oy,16,36))}" fill="#1a1d26"/>`;
+  });
+  h += `<polygon points="${fmt(cp)}" fill="#1a1d26"/>`;
+  document.getElementById('ball').innerHTML = h;
+})();
+
+/* ===== Skills content (standard beginner coaching, easy to reword) ===== */
+const SKILLS = [
+  { name:'Dribbling', steps:[
+      'Keep the ball close with small touches.',
+      'Use the inside and laces of your foot, not your toe.',
+      'Keep your head up to see the field.',
+      'Change your speed to get past a defender.' ],
+    mistakes:[ 'Pushing the ball too far ahead.', 'Staring down at the ball.', 'Only ever using your strong foot.' ] },
+  { name:'Passing', steps:[
+      'Plant your standing foot beside the ball, pointing at your target.',
+      'Strike the middle of the ball with the inside of your foot.',
+      'Follow through toward where you want it to go.',
+      'Pass firmly so it reaches your teammate.' ],
+    mistakes:[ 'Kicking with your toe.', 'Leaning back as you pass.', 'Not following through.' ] },
+  { name:'First Touch', steps:[
+      'Watch the ball all the way to your foot.',
+      'Get your body behind the ball.',
+      'Cushion it by pulling your foot back slightly as it arrives.',
+      'Guide your touch into open space.' ],
+    mistakes:[ 'Keeping a stiff foot so the ball bounces away.', 'Looking up too early.', 'Trapping the ball into a crowd.' ] },
+  { name:'Shooting', steps:[
+      'Plant your standing foot next to the ball.',
+      'Strike through the middle with your laces.',
+      'Keep your head steady and over the ball.',
+      'Follow through and aim for the corners.' ],
+    mistakes:[ 'Leaning back so the ball flies high.', 'Toe-poking the ball.', 'Forgetting to plant your standing foot.' ] },
+];
+document.getElementById('skills').innerHTML = SKILLS.map((s,i)=>`
+  <article class="skill">
+    <div class="skill-head"><span class="num gold">${String(i+1).padStart(2,'0')}</span><h2 class="gold">${s.name}</h2></div>
+    <p class="label">Steps</p>
+    <ol>${s.steps.map(x=>`<li>${x}</li>`).join('')}</ol>
+    <hr class="silver-line">
+    <p class="label warn">Key Mistakes</p>
+    <ul class="mistakes">${s.mistakes.map(x=>`<li>${x}</li>`).join('')}</ul>
+  </article>`).join('');
+</script>
+</body>
+</html>
